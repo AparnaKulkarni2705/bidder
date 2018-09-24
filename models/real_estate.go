@@ -123,7 +123,7 @@ func PlaceBid(session *mgo.Session, re *RealEstate, bidder_email string, bid_amo
 
 func (re *RealEstate) GetBidWinner(session *mgo.Session) (string, float64, error){
     real_estate_collection := session.DB("di_bidder_db").C(REAL_ESTATE_COLLECTION_NAME)
-    var fetched_re *RealEstate
+    fetched_re := &RealEstate{}
 
     err := real_estate_collection.Find(bson.M{"_id":re.ID}).One(fetched_re)
     if err!=nil{
