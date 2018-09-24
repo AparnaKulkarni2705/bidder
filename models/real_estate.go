@@ -5,10 +5,12 @@ import (
     "errors"
     mgo "gopkg.in/mgo.v2"
     "gopkg.in/mgo.v2/bson"
+    "sync"
 
 )
 
 const REAL_ESTATE_COLLECTION_NAME = "real_estate"
+var mutex sync.Mutex
 
 type BidderBidMap struct{
     BidderEmail	string	`bson:"bidder_email" json:"bidder_email"`
@@ -66,6 +68,10 @@ func (re *RealEstate) SetInitialBid(session *mgo.Session, initial_bid float64) e
 }
 
 func PlaceBid(session *mgo.Session, re *RealEstate, bidder_email string, bid_amount float64) error {
+
+    mutex.Lock()
+    defer mutex.Unlock()
+
     real_estate_collection := session.DB("di_bidder_db").C(REAL_ESTATE_COLLECTION_NAME)
    
     real_estate_fetched := &RealEstate{}   
