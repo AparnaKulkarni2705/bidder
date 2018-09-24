@@ -1,7 +1,7 @@
 package db
 
 import (
-    "gopkg.in/mgo.v2"
+    mgo "gopkg.in/mgo.v2"
     "log"
 )
 
@@ -15,4 +15,23 @@ func init(){
 	panic(err)
     }
     MgoSession = session
+    ensureIndexes()
+}
+
+func ensureIndexes(){
+    ensureIndexOnBidder()
+}
+
+func ensureIndexOnBidder(){
+     index := mgo.Index{
+	Key: []string{"email"},
+	Unique: true,
+	Background: true,
+    }
+
+    err := MgoSession.DB("di_bidder_db").C("bidder").EnsureIndex(index)
+    if err!=nil{
+	log.Fatal("Unique index does not exist on collection : bidder")
+	panic("Unique index does not exist on collection : bidder")
+    }
 }
